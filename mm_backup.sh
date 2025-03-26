@@ -303,8 +303,8 @@ cp -p $base/css/custom.css $saveDir 2>/dev/null
 	fi 
 	# get the installed module list
 	# split putput on new lines, not spaces
-	echo "Backing up entire modules directory..." | tee -a $logfile
-	cp -a $base/modules $saveDir/modules
+	echo "Backing up the entire modules directory..." | tee -a $logfile
+	rsync -a --exclude 'node_modules' --exclude '.git' $base/modules/ $saveDir/modules/
 	if [ $mac != 'Darwin' ]; then
 		IFS=$SAVEIFS
 	fi
