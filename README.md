@@ -1,118 +1,113 @@
 # MagicMirror-backup-restore
-scripts for backing up magicmirror config and module github urls  and using that to restore at a later time
 
-these scripts will  save the config.js , custom.css and the list of installed modules (and where they are loaded from (github urls)
-into a git repo, so they can be versioned and uploaded to a ===>**private**<===  github repository
-  if you wish to use github and never have, see below for how to get the required access token
+Scripts for backing up and restoring your MagicMirror configuration and installed modules.
 
-the restore script takes the info saved and copies back the config.js, custom.css  and re-installs each module
+This version supports:
 
-it assumes a new MagicMirror install has been completed
+- Saving your full `modules` directory (not just Git-cloned modules)
+- Storing your `config.js` and `custom.css`
+- Maintaining a list of installed modules and their GitHub source URLs (if available)
+- Automatically pushing backups to a **private GitHub repository**
+- Restoring a complete working setup using versioned git tags
 
-both scripts support help with -h
+---
 
-and parms for where the MagicMirror folder is  -s , default $HOME/MagicMirror
+## 🔄 Backup
 
-and the name of the backup folder, -b , default $HOME/MM_backup
+To run a backup, use:
 
-one can execute the scripts directly from here
-
-# to execute Backup
 ```bash
-bash -c  "$(curl -sL https://raw.githubusercontent.com/sdetweil/MagicMirror-backup-restore/main/mm_backup.sh)" with any parms
+bash -c "$(curl -sL https://raw.githubusercontent.com/nerdspar/MagicMirror-backup-restore/main/mm_backup.sh)"
 ```
 
+### ✅ Recommended with push to GitHub:
 
+```bash
+bash -c "$(curl -sL https://raw.githubusercontent.com/nerdspar/MagicMirror-backup-restore/main/mm_backup.sh)" -p -r username/reponame -u username -e your@email.com
+```
 
-help for backup is
+### Backup Help
 
+Run this to see help:
+
+```bash
 ./mm_backup.sh -h
-
-./mm_backup.sh takes optional parameters
-
-	 -s MagicMirror_dir
-		default $HOME/MagicMirror
-
-	 -b backup_dir
-		default $HOME/MM_backup
-
-	 -m backup_message
-		 any message (in quotes) that you would like to attach to this change for later info
-		default none
-
-	 -p auto push to github (will need repo name, username,  user password or token
-		default false
-
-	 -r github_repository_name (reponame)
-		typically https://github.com/${username}/reponame.git
-		default output of git remote -v (if set)
-		 -r overrides the git remote setting
-
-	 -u github_username
-		default none
-
-	 -e users_email_address
-		default none
-# and to restore
-```bash
-bash -c  "$(curl -sL https://raw.githubusercontent.com/sdetweil/MagicMirror-backup-restore/main/mm_restore.sh)" with any parms
 ```
 
-help for restore  is
+Supported flags:
 
+| Flag | Description |
+|------|-------------|
+| `-s` | MagicMirror directory (default: `$HOME/MagicMirror`) |
+| `-b` | Backup output directory (default: `$HOME/MM_backup`) |
+| `-m` | Optional message to include with this backup/tag |
+| `-p` | Auto-push to GitHub (requires `-r`, `-u`, and `-e`) |
+| `-r` | GitHub repo name, e.g. `username/reponame` |
+| `-u` | GitHub username |
+| `-e` | GitHub email address |
+
+---
+
+## ♻️ Restore
+
+To restore a backup (and all modules), use:
+
+```bash
+bash -c "$(curl -sL https://raw.githubusercontent.com/nerdspar/MagicMirror-backup-restore/main/mm_restore.sh)"
+```
+
+### Restore Help
+
+Run this to see help:
+
+```bash
 ./mm_restore.sh -h
-
-./mm_restore.sh takes optional parameters
-
-	 -s MagicMirror_dir
-		default $HOME/MagicMirror
-
-	 -b backup_dir
-		default $HOME/MM_backup
-
-	 -f [tag_number]
-		fetch/clone repo and restore latest, or optional tag_number
-
-	 -r github repository name (reponame)
-		typically https://github.com/${username}/reponame.git
-		default output of git remote -v (if set)
-		 -r overrides the git remote setting
-
-	 -u github username
-		default none
-
-
-on backup, each collection of files is given a label, called a tag in git.
-for this application the tag is a number, starting at 1
-
-by default list-tags will use the $HOME/MM_backup folder name
-
-help for list_tags  is
-
-./list_tags.sh -h
-
-./list_tags.sh takes optional parameters
-
-	 -b backup_dir
-		default $HOME/MM_backup
-
-
-# to list the tags copy/paste this command
-```bash
-bash -c  "$(curl -sL https://raw.githubusercontent.com/sdetweil/MagicMirror-backup-restore/main/list_tags.sh)" ??
 ```
 
-# getting the github access token
-* on github, select your profile
+Supported flags:
 
-* select settings <br>
-* select developer settings <br>
-* personal access tokens <br>
-* classic token <br>
-* make sure to select write/update repository permissions <br>
-* generate <br>
+| Flag | Description |
+|------|-------------|
+| `-s` | MagicMirror directory (default: `$HOME/MagicMirror`) |
+| `-b` | Backup directory (default: `$HOME/MM_backup`) |
+| `-f` | Fetch & restore from GitHub using latest or specific tag number |
+| `-r` | GitHub repository name (e.g. `username/repo.git`) |
+| `-u` | GitHub username |
 
- >you will use this string for your password on the command prompt for the git password
+---
 
- Note: github  will NOT SHOW you this token again. so if you forget it, you have to generate a new token
- 
+## 🏷️ Listing Tags
+
+Each backup is tagged using an incrementing number (`1`, `2`, etc.). To list the tags:
+
+```bash
+bash -c "$(curl -sL https://raw.githubusercontent.com/nerdspar/MagicMirror-backup-restore/main/list_tags.sh)"
+```
+
+Or view manually from the GitHub repo.
+
+---
+
+## 🔑 GitHub Personal Access Token (PAT)
+
+To push your backup to a private repo:
+
+1. Go to GitHub > Settings > Developer Settings
+2. Choose **"Personal Access Tokens"** → **Tokens (classic)**
+3. Generate a new token with **repo** (read/write) permissions
+4. Copy and save your token! GitHub will not show it again
+5. Use this token in place of a password when prompted by `git`
+
+---
+
+## 🕓 Cron Example
+
+To schedule a daily backup at 3:30 AM:
+
+```cron
+30 3 * * * bash -c "$(curl -sL https://raw.githubusercontent.com/nerdspar/MagicMirror-backup-restore/main/mm_backup.sh)" -p -r nerdspar/MagicMirror-Backup -u nerdspar -e your@email.com
+```
+
+---
+
+Happy backing up! ✨
